@@ -30,4 +30,24 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+ecommerce-ui/.vscode/
+
+# Angular UI project
+ecommerce-ui/node_modules/
+ecommerce-ui/jspm_packages/
+ecommerce-ui/dist/
+ecommerce-ui/out-tsc/
+ecommerce-ui/coverage/
+ecommerce-ui/build/
+ecommerce-ui/.angular/
+ecommerce-ui/.angular-cache/
+ecommerce-ui/*.env
+ecommerce-ui/*.map
+ecommerce-ui/tmp/
+ecommerce-ui/temp/
+ecommerce-ui/*.tmp
+
+# Logs
+ecommerce-ui/logs
+ecommerce-ui/*.log
+ecommerce-ui/npm-debug.log*
