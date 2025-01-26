@@ -3,8 +3,10 @@ package com.varsha.ecommerce.service;
 import com.varsha.ecommerce.dto.SignUpDTO;
 import com.varsha.ecommerce.dto.UserDTO;
 import com.varsha.ecommerce.entity.User;
+import com.varsha.ecommerce.enums.UserRole;
 import com.varsha.ecommerce.mapper.UserMapper;
 import com.varsha.ecommerce.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,4 +35,17 @@ public class AuthServiceImpl implements AuthService{
         return userRepository.findByEmail(email).isPresent();
     }
 
+    @PostConstruct
+    public void createAdminAccount(){
+        User adminAccount = userRepository.findByRole(UserRole.ADMIN);
+
+        if(adminAccount==null){
+            User user = new User();
+            user.setEmail("admin@test.com");
+            user.setName("admin");
+            user.setRole(UserRole.ADMIN);
+            user.setPassword(encoder.encode("admin"));
+            userRepository.save(user);
+        }
+    }
 }
