@@ -9,7 +9,7 @@ import { AuthService } from '../service/auth/auth.service';
   standalone: false,
   
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss'
+  styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent {
 
