@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../service/auth/auth.service';
+import { Router } from 'express';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -8,5 +12,26 @@ import { Component } from '@angular/core';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+
+  loginForm!: FormGroup;
+  hidePassword = true;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private snackbar: MatSnackBar
+  ){}
+
+  ngOnInit(): void{
+    this.loginForm = this.formBuilder.group({
+      email: [null, [Validators.required]],
+      password: [null, [Validators.required]]
+    })
+  }
+
+  togglePasswordVisibility(){
+    this.hidePassword = !this.hidePassword;
+  }
 
 }
