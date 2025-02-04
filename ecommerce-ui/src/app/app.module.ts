@@ -9,16 +9,12 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { UserStorageComponent } from './service/storage/user-storage/user-storage.component';
-import { ProductComponent } from './product/product.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    SignupComponent,
-    UserStorageComponent,
-    ProductComponent
+    SignupComponent
   ],
   imports: [
     BrowserModule,

@@ -34,4 +34,18 @@ export class LoginComponent {
     this.hidePassword = !this.hidePassword;
   }
 
+  onSubmit(): void{
+    const username = this.loginForm.get('email')!.value;
+    const password = this.loginForm.get('password')!.value;
+
+    this.authService.login(username, password).subscribe(
+      (res)=>{
+        this.snackbar.open('Successfully logged in!', 'OK', {duration: 5000});
+      },
+      (error) => {
+        this.snackbar.open('Invalid username and/or password', 'ERROR', {duration: 5000});
+      }
+    );
+
+  }
 }
