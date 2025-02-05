@@ -1,5 +1,6 @@
 package com.varsha.ecommerce.controller;
 
+import com.varsha.ecommerce.dto.AuthResponseDTO;
 import com.varsha.ecommerce.dto.AuthenticationDTO;
 import com.varsha.ecommerce.dto.SignUpDTO;
 import com.varsha.ecommerce.dto.UserDTO;
@@ -8,10 +9,8 @@ import com.varsha.ecommerce.repository.UserRepository;
 import com.varsha.ecommerce.service.AuthService;
 import com.varsha.ecommerce.service.CustomUserDetailsService;
 import com.varsha.ecommerce.service.JwtService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,27 +35,26 @@ public class AuthenticationController {
     private final AuthService authService;
 
     @PostMapping("/authenticate")
-    public void createAuthToken(@RequestBody AuthenticationDTO dto, HttpServletResponse response) throws
-            JSONException, IOException {
-
-        try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
+    public ResponseEntity<AuthResponseDTO> createAuthToken(@RequestBody AuthenticationDTO dto) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.username(), dto.password())
+            );
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponseDTO("Incorrect username and/or password", null, null));
         }
-        catch (BadCredentialsException e){
-            throw new BadCredentialsException("Incorrect username and/or password");
-        }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(dto.getUsername());
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        final String jwt = jwtService.generateToken(userDetails);
-        response.getWriter().write(new JSONObject().put("userId", user.getId())
-                .put("role", user.getRole())
-                .toString()
-        );
-        response.addHeader("Access-Control-Expose-Headers", "Authorization");
-        response.addHeader("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, Origin, " +
-                "X-Requested-With, Content-Type, Accept, X-Custom-header");
-        response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(dto.username());
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String jwt = jwtService.generateToken(userDetails);
+
+        AuthResponseDTO response = new AuthResponseDTO("Login successful", user.getId(), jwt);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
+                .body(response);
     }
 
     @PostMapping("/signup")

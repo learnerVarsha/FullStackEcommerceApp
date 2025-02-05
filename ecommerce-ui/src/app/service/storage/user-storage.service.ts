@@ -14,8 +14,8 @@ export class UserStorageService {
     window.localStorage.setItem(TOKEN, token);
   }
 
-  public saveUser(user): void{
+  public saveUser(userId): void{
     window.localStorage.removeItem(USER);
-    window.localStorage.setItem(USER, JSON.stringify(user));
+    window.localStorage.setItem(USER, userId);
   }
 }
